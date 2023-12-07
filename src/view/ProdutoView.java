@@ -228,7 +228,17 @@ public class ProdutoView {
 				new String[] {
 					"#ID", "Nome", "Qtd.", "Departamento", "Valor"
 				}
-			));
+					) {
+	            boolean[] canEdit = new boolean [] {
+	                false, false, false, false, false, false
+	            };
+
+	            public boolean isCellEditable(int rowIndex, int columnIndex) {
+	                return canEdit [columnIndex];
+	            }
+	        });
+			table.setSelectionBackground(new java.awt.Color(204, 204, 204));
+			table.setRowHeight(20);
 			table.getColumnModel().getColumn(1).setPreferredWidth(252);
 			table.getColumnModel().getColumn(3).setPreferredWidth(118);
 			tabelaEvent();
