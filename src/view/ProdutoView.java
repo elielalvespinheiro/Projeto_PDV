@@ -24,10 +24,13 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class ProdutoView {
 
+	List<Produto> listar = new ArrayList<>();
 	ProdutoController produtoController;
 	
 	public static final int POSICAO_BOTAO = 460;
@@ -45,8 +48,9 @@ public class ProdutoView {
 	private JTextField tfCodigoBarras;//Campo de texto
 	private JButton btnSalvar;
 	private JButton btnEditar;
+	private JButton btnDeletar;
 	private JTable table;
-	private JScrollPane jScrollPane1;
+	private JComboBox cbDepartamento;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -63,6 +67,7 @@ public class ProdutoView {
 
 	public ProdutoView() {
 		iniciarTela();
+		listar();
 	}
 	
 	public void limparCampos() {
@@ -71,7 +76,39 @@ public class ProdutoView {
 		tfNome.setText("");
 		tfQuantidade.setText("");
 		tfValor.setText("");
+		btnEditar.setEnabled(false);
+		btnSalvar.setEnabled(true);
+		listar();
 	}
+	
+	public void setarCampos(Produto produto) {
+		tfCodigoBarras.setText(produto.getCodBarras());
+		tfId.setText(String.valueOf(produto.getId()));
+		tfNome.setText(produto.getNome());
+		tfQuantidade.setText(String.valueOf(produto.getQuantidade()));
+		tfValor.setText(String.valueOf(produto.getValor()));
+		cbDepartamento.setSelectedItem(produto.getDepartamento());
+		btnEditar.setEnabled(true);
+		btnSalvar.setEnabled(false);
+		//listar();
+	}
+	
+	private void listar() { 
+		produtoController = new ProdutoController();
+        listar = produtoController.getProduto();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setNumRows(0);
+        int tamanhoLista = listar.size();
+        for(int i = 0; i < tamanhoLista; i++){
+            model.addRow(new Object[]{
+            	listar.get(i).getId(),
+            	listar.get(i).getNome(),
+            	listar.get(i).getQuantidade(),
+            	listar.get(i).getDepartamento(),
+            	listar.get(i).getValor()
+            });
+        }
+    }
 
 	private void iniciarTela() {
 		try {
@@ -128,7 +165,7 @@ public class ProdutoView {
 			departamento.setBounds(365, 62, 110, POSICAO_LABEL);
 			panel.add(departamento);
 			
-			JComboBox cbDepartamento = new JComboBox();
+			cbDepartamento = new JComboBox();
 			cbDepartamento.setModel(new DefaultComboBoxModel(new String[] {"LIMPEZA", "AÇOUGUE", "PAPELARIA"}));
 			cbDepartamento.setBounds(365, 87, 378, POSICAO_CAMPO_TEXTO);
 			panel.add(cbDepartamento);
@@ -168,9 +205,16 @@ public class ProdutoView {
 			btnSalvar.setEnabled(true);
 			
 			btnEditar = new JButton("Editar");
+			editarProdutoEvent(tfValor);
 			btnEditar.setBounds(455, POSICAO_BOTAO, 89, 23);
 			panel.add(btnEditar);
 			btnEditar.setEnabled(false);
+			
+			btnDeletar = new JButton("Deletar");
+			
+			btnDeletar.setBounds(355, POSICAO_BOTAO, 89, 23);
+			panel.add(btnDeletar);
+			btnDeletar.setEnabled(false);
 			
 			JScrollPane scrollPane = new JScrollPane();
 			scrollPane.setBounds(11, 200, 732, 247);
@@ -187,13 +231,21 @@ public class ProdutoView {
 			));
 			table.getColumnModel().getColumn(1).setPreferredWidth(252);
 			table.getColumnModel().getColumn(3).setPreferredWidth(118);
+			tabelaEvent();
 			scrollPane.setViewportView(table);
 			
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
+	public void selecionarNaTabela() {
+        int linha = table.getSelectedRow();
+        int id = Integer.parseInt(String.valueOf(table.getValueAt(linha, 0)));
+        produtoController = new ProdutoController();
+        Produto produto = produtoController.getProduto(id);
+        setarCampos(produto);
+	}
 
 	//Eventos de botões
 	public void salvarProdutoEvent(JTextField tfValor, JButton btnSalvar) {
@@ -202,7 +254,46 @@ public class ProdutoView {
 				String codBarras = tfCodigoBarras.getText();
 				String id = tfId.getText();
 				String nome = tfNome.getText();
-				String quantidade = tfQuantidade.getText();
+				Integer quantidade = Integer.parseInt(tfQuantidade.getText());
+				String departamento = cbDepartamento.getSelectedItem() + "";
+				if(tfValor.getText() == null) {
+					JOptionPane.showMessageDialog(null, "É necessário passar um valor para esse produto!");
+					return;
+				}
+				Double valor = Double.parseDouble(tfValor.getText());
+				
+				if(codBarras.equals("")) {
+					JOptionPane.showMessageDialog(null, "É necessário preencher o campo de código de barras!");
+				} else {
+					Produto produto = new Produto();
+					produto.setCodBarras(codBarras);
+					produto.setDepartamento("");
+					produto.setNome(nome);
+					produto.setValor(valor);
+					produto.setQuantidade(quantidade);
+					produto.setDepartamento(departamento);
+					produtoController = new ProdutoController();
+					int cadastrou = produtoController.salvarProduto(produto);
+					
+					if(cadastrou == 1) {
+						JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso.");
+						limparCampos();
+					} else {
+						JOptionPane.showMessageDialog(null, "Ocorreu um erro ao tentar cadastrar produto.");
+					}
+				}
+			}
+		});
+	}
+	
+	public void editarProdutoEvent(JTextField tfValor) {
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String codBarras = tfCodigoBarras.getText();
+				Integer id = Integer.parseInt(tfId.getText());
+				String nome = tfNome.getText();
+				Integer quantidade = Integer.parseInt(tfQuantidade.getText());
+				String departamento = cbDepartamento.getSelectedItem() + "";
 				if(tfValor.getText() == null) {
 					JOptionPane.showMessageDialog(null, "É necessário passar um valor para esse produto!");
 					return;
@@ -213,25 +304,20 @@ public class ProdutoView {
 					JOptionPane.showMessageDialog(null, "É necessário preencher o campo de código de barras!");
 				} else {
 				
-				System.out.println(
-						
-						"CodBarras: " + codBarras + "\n"
-						+ "Id: " + id + "\n"
-						+ "nome: " + nome + "\n"
-						+ "quantidade: " + quantidade + "\n"
-						+ "valor: " + valor + "\n"
-						);
-				
 				Produto produto = new Produto();
+				produto.setId(id);
 				produto.setCodBarras(codBarras);
 				produto.setDepartamento("");
 				produto.setNome(nome);
 				produto.setValor(valor);
-				produtoController = new ProdutoController();
-				int cadastrou = produtoController.salvarProduto(produto);
+				produto.setQuantidade(quantidade);
+				produto.setDepartamento(departamento);
 				
-				if(cadastrou == 1) {
-					JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso.");
+				produtoController = new ProdutoController();
+				boolean cadastrou = produtoController.editarProduto(produto);
+				
+				if(cadastrou) {
+					JOptionPane.showMessageDialog(null, "Produto editado com sucesso.");
 					limparCampos();
 				} else {
 					JOptionPane.showMessageDialog(null, "Ocorreu um erro ao tentar cadastrar produto.");
@@ -270,4 +356,13 @@ public class ProdutoView {
 			}
 		});
 	}
+	
+	public void tabelaEvent() {
+		table.addMouseListener(new java.awt.event.MouseAdapter() {
+		    public void mouseClicked(java.awt.event.MouseEvent evt) {
+		    	selecionarNaTabela();
+		    }
+		});
+	}
+	
 }

@@ -3,6 +3,9 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
 import conexao.mysql;
 import model.Produto;
 
@@ -39,20 +42,33 @@ public class ProdutoDAO extends mysql {
         } 
     }
 	
+	public boolean delete(int id) {
+        try {
+        	String sql = "DELETE FROM tbl_produto WHERE id = " + id; 
+        	pst = cn.prepareStatement(sql); 
+            Integer p = pst.executeUpdate();
+           
+            if(p != null) {  
+            	return true;
+            }
+            
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } 
+    }
+	
 	public boolean update(Produto produto) {
         try {
-        	//Criar sql do banco
         	String sql = "UPDATE tbl_produto SET "
-        			+ "id=" + produto.getId() + ", "
-        			+ "nome=" + produto.getNome() + ", "
-        			+ "valor=" + produto.getValor() + ", "
-        			+ "departamento= " + produto.getDepartamento() + ", "
-        			+ "cod_barras=" + produto.getCodBarras() + ", "
-        			+ "quantidade=" + produto.getQuantidade() + " "
-        			+ "WHERE id = " + produto.getId(); 
-        	//Preparar
+        			+ "nome='" + produto.getNome() + "', "
+        			+ "valor='" + produto.getValor() + "', "
+        			+ "departamento= '" + produto.getDepartamento() + "', "
+        			+ "cod_barras='" + produto.getCodBarras() + "', "
+        			+ "quantidade='" + produto.getQuantidade() + "' "
+        			+ "WHERE id = '" + produto.getId() + "';"; 
         	pst = cn.prepareStatement(sql);
-            //executeQuery() é para realizar atualizações e inserções de registro.
             Integer p = pst.executeUpdate();
            
             if(p != null) {  
@@ -89,11 +105,74 @@ public class ProdutoDAO extends mysql {
 		}
 	}
 	
+	public Produto findById(int id) {
+		try {
+			String sql = "SELECT * FROM tbl_produto WHERE id = " + id;
+			pst = cn.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			if(rs.next()) {
+				Produto produto = new Produto();
+				produto.setId(rs.getInt(1));
+				produto.setNome(rs.getString(2));
+				produto.setDepartamento(rs.getString(3));
+				produto.setValor(rs.getDouble(4));
+				produto.setQuantidade(rs.getInt(5));
+				produto.setCodBarras(rs.getString(6));
+				return produto;
+			}
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+            return null;
+		}
+	}
+	
+	public List<Produto> findAll() {
+		try {
+			Produto produto = new Produto();
+			List<Produto> lista = new ArrayList<>();
+			String sql = "SELECT * FROM tbl_produto";
+			pst = cn.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				produto = new Produto();
+				produto.setId(rs.getInt(1));
+				produto.setNome(rs.getString(2));
+				produto.setDepartamento(rs.getString(3));
+				produto.setValor(rs.getDouble(4));
+				produto.setQuantidade(rs.getInt(5));
+				produto.setCodBarras(rs.getString(6));
+				lista.add(produto);
+			}
+			return lista;
+		} catch (Exception e) {
+			e.printStackTrace();
+            return null;
+		}
+	}
+	
+	public List<Produto> findAll(String nome) {
+		try {
+			Produto produto = new Produto();
+			List<Produto> lista = new ArrayList<>();
+			String sql = "SELECT * FROM tbl_produto WHERE nome LIKE %" + nome + "%";
+			pst = cn.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				produto = new Produto();
+				produto.setId(rs.getInt(1));
+				produto.setNome(rs.getString(2));
+				produto.setDepartamento(rs.getString(3));
+				produto.setValor(rs.getDouble(4));
+				produto.setQuantidade(rs.getInt(5));
+				produto.setCodBarras(rs.getString(6));
+				lista.add(produto);
+			}
+			return lista;
+		} catch (Exception e) {
+			e.printStackTrace();
+            return null;
+		}
+	}
+	
 }
-
-
-
-//while(){
-//o = new Sale();
-//o.setId(getResultSet().getInt(1));
-//}

@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.List;
+
 import dao.ProdutoDAO;
 import model.Produto;
 
@@ -17,6 +19,22 @@ public class ProdutoController {
 	
 	public Produto getProduto(String codigoBarras) {
 		return dao.findByCodBarras(codigoBarras);
+	}
+	
+	public Produto getProduto(int id) {
+		return dao.findById(id);
+	}
+	
+	public List<Produto> getProduto() {
+		return dao.findAll();
+	}
+	
+	public List<Produto> getProdutoNome(String nome) {
+		return dao.findAll(nome);
+	}
+	
+	public Boolean delete(int id) {
+		return dao.delete(id);
 	}
 
 }
