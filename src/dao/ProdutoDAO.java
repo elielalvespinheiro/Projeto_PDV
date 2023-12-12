@@ -175,4 +175,28 @@ public class ProdutoDAO extends mysql {
 		}
 	}
 	
+	public List<Produto> findAllCodBarras(String codBarras) {
+		try {
+			Produto produto = new Produto();
+			List<Produto> lista = new ArrayList<>();
+			String sql = "SELECT * FROM tbl_produto WHERE COD_BARRAS LIKE %" + codBarras + "%";
+			pst = cn.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				produto = new Produto();
+				produto.setId(rs.getInt(1));
+				produto.setNome(rs.getString(2));
+				produto.setDepartamento(rs.getString(3));
+				produto.setValor(rs.getDouble(4));
+				produto.setQuantidade(rs.getInt(5));
+				produto.setCodBarras(rs.getString(6));
+				lista.add(produto);
+			}
+			return lista;
+		} catch (Exception e) {
+			e.printStackTrace();
+            return null;
+		}
+	}
+	
 }

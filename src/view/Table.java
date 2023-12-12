@@ -7,6 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JPanel;
+import javax.swing.JCheckBox;
 
 public class Table {
 
@@ -46,7 +47,7 @@ public class Table {
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(10, 11, 702, 415);
+		panel.setBounds(10, 135, 702, 291);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 		
@@ -66,6 +67,9 @@ public class Table {
 		table.getColumnModel().getColumn(1).setPreferredWidth(252);
 		table.getColumnModel().getColumn(3).setPreferredWidth(118);
 		scrollPane.setViewportView(table);
+		
+		JCheckBox chckbxNewCheckBox = new JCheckBox("New check box");
+		chckbxNewCheckBox.setBounds(50, 31, 97, 23);
+		frame.getContentPane().add(chckbxNewCheckBox);
 	}
-
 }

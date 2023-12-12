@@ -17,7 +17,7 @@ public class ProdutoController {
 		return dao.update(produto);
 	}
 	
-	public Produto getProduto(String codigoBarras) {
+	public Produto getProdutoCodBarras(String codigoBarras) {
 		return dao.findByCodBarras(codigoBarras);
 	}
 	
@@ -31,6 +31,10 @@ public class ProdutoController {
 	
 	public List<Produto> getProdutoNome(String nome) {
 		return dao.findAll(nome);
+	}
+	
+	public List<Produto> getProdutoCodBarrasLista(String codBarras) {
+		return dao.findAllCodBarras(codBarras);
 	}
 	
 	public Boolean delete(int id) {
