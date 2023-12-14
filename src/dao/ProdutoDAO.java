@@ -155,7 +155,7 @@ public class ProdutoDAO extends mysql {
 		try {
 			Produto produto = new Produto();
 			List<Produto> lista = new ArrayList<>();
-			String sql = "SELECT * FROM tbl_produto WHERE nome LIKE %" + nome + "%";
+			String sql = "SELECT * FROM tbl_produto WHERE nome LIKE '%" + nome + "%'";
 			pst = cn.prepareStatement(sql);
 			ResultSet rs = pst.executeQuery();
 			while(rs.next()) {
@@ -178,8 +178,8 @@ public class ProdutoDAO extends mysql {
 	public List<Produto> findAllCodBarras(String codBarras) {
 		try {
 			Produto produto = new Produto();
-			List<Produto> lista = new ArrayList<>();
-			String sql = "SELECT * FROM tbl_produto WHERE COD_BARRAS LIKE %" + codBarras + "%";
+			List<Produto> lista = new ArrayList<>(); 
+			String sql = "SELECT * FROM tbl_produto WHERE COD_BARRAS = " + codBarras;
 			pst = cn.prepareStatement(sql);
 			ResultSet rs = pst.executeQuery();
 			while(rs.next()) {
