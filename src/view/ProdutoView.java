@@ -12,6 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Window;
+
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
@@ -43,7 +47,7 @@ public class ProdutoView {
 	public static final int ALTURA_TABELA = 200;
 	public static final int POSICAO_TABELA = 245;
 	
-	private JFrame frame;//Tela
+	public JFrame frame;//Tela
 	private JTextField tfId;//Campo de texto
 	private JTextField tfNome;//Campo de texto
 	private JTextField tfQuantidade;//Campo de texto
@@ -58,18 +62,7 @@ public class ProdutoView {
 	private JComboBox cbDepartamento;
 	private JCheckBox chCodBarras;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ProdutoView window = new ProdutoView();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 
 	public ProdutoView() {
 		iniciarTela();
@@ -124,7 +117,7 @@ public class ProdutoView {
 			frame = new JFrame();
 			frame.setResizable(false);
 			frame.setBounds(100, 100, LARGURA_TELA, ALTURA_TELA);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.getContentPane().setLayout(null);
 			frame.setLocationRelativeTo(null);
 			
