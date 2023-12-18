@@ -26,10 +26,10 @@ public class HomeView extends JFrame {
 
 	private void initialize() {
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("HOME");
+        
         //setExtendedState(6);
         //setUndecorated(true);
-        
+		setTitle("HOME");
 		setResizable(false);
 		setBounds(100, 100, 657, 392);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
